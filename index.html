@@ -2,671 +2,758 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P&L / ОПиУ для производства: Управленческий подход</title>
-    <meta name="description" content="Руководство по составлению управленческого отчета о прибылях и убытках для производственного предприятия. Калькулятор P&L и структура показателей.">
+    <title>P&L Калькулятор для производства | Управленческий учет</title>
+    <meta name="description" content="Интерактивный калькулятор P&L (ОПиУ) для производственного бизнеса. Сравнение управленческой и бухгалтерской прибыли, визуализация водопада расходов.">
     
-    <meta property="og:title" content="P&L для производства: Управленческий отчет">
-    <meta property="og:description" content="Как читать и составлять отчет о прибыли. Структура, формулы, онлайн-калькулятор EBITDA.">
+    <meta property="og:title" content="P&L Калькулятор для производства">
+    <meta property="og:description" content="Посчитайте EBITDA, маржинальный доход и чистую прибыль. Визуализация в реальном времени.">
     <meta property="og:type" content="website">
+    <meta property="og:locale" content="ru_RU">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
 
     <style>
         :root {
-            /* Palette */
-            --primary: #0f172a; /* Slate 900 */
-            --primary-light: #334155;
-            --accent: #2563eb; /* Blue 600 */
-            --accent-hover: #1d4ed8;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            
-            /* Backgrounds */
+            /* Colors */
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
             --bg-body: #f8fafc;
             --bg-card: #ffffff;
-            --bg-section: #f1f5f9;
-
-            /* Text */
-            --text-main: #1e293b;
-            --text-muted: #64748b;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+            --border: #e2e8f0;
             
-            /* UI Elements */
+            /* Semantic Colors */
+            --color-revenue: #3b82f6;
+            --color-cost: #ef4444;
+            --color-profit: #10b981;
+            --color-neutral: #94a3b8;
+
+            /* Spacing & UI */
+            --container-width: 1200px;
             --radius: 12px;
             --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --container-width: 1140px;
-            --header-height: 70px;
+            --font-main: 'Inter', sans-serif;
         }
 
-        /* --- Reset & Base --- */
+        /* Reset & Base */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
         html { scroll-behavior: smooth; }
         
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-main);
             background-color: var(--bg-body);
             color: var(--text-main);
-            line-height: 1.6;
+            line-height: 1.5;
             -webkit-font-smoothing: antialiased;
         }
 
-        h1, h2, h3, h4 {
-            font-family: 'Manrope', sans-serif;
-            font-weight: 700;
-            line-height: 1.2;
-            color: var(--primary);
-        }
+        h1, h2, h3, h4 { line-height: 1.2; font-weight: 700; color: var(--text-main); }
+        p { margin-bottom: 1rem; color: var(--text-muted); }
+        a { text-decoration: none; color: inherit; transition: 0.2s; }
 
-        a { text-decoration: none; color: inherit; transition: color 0.2s; }
-        ul { list-style: none; }
-        
         .container {
             max-width: var(--container-width);
             margin: 0 auto;
             padding: 0 20px;
         }
 
-        section { padding: 80px 0; border-bottom: 1px solid #e2e8f0; }
-
-        /* --- Components --- */
         .btn {
             display: inline-block;
-            background: var(--accent);
+            background: var(--primary);
             color: white;
-            padding: 14px 28px;
-            border-radius: var(--radius);
+            padding: 12px 24px;
+            border-radius: 8px;
             font-weight: 600;
             border: none;
             cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
+            transition: background 0.2s;
         }
-        .btn:hover { background: var(--accent-hover); transform: translateY(-2px); }
-
-        .tag {
-            display: inline-block;
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-
-        .formula-box {
-            background: #f8fafc;
-            border: 1px dashed #cbd5e1;
-            padding: 12px;
-            border-radius: 8px;
-            font-family: monospace;
+        .btn:hover { background: var(--primary-dark); }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
             color: var(--primary);
-            margin: 16px 0;
-            display: inline-block;
-            font-weight: 600;
         }
+        .btn-outline:hover { background: var(--primary); color: white; }
 
-        /* --- Header --- */
-        header {
-            position: sticky;
-            top: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid #e2e8f0;
-            height: var(--header-height);
-            display: flex;
-            align-items: center;
-        }
-        
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .logo { font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-        .logo svg { color: var(--accent); }
-
-        .nav-links { display: flex; gap: 24px; }
-        .nav-links a { font-size: 0.95rem; font-weight: 500; color: var(--text-muted); }
-        .nav-links a:hover { color: var(--accent); }
-
-        /* --- Hero --- */
+        /* --- Hero Section --- */
         .hero {
-            padding: 100px 0 80px;
-            background: radial-gradient(circle at top right, #f0f9ff, white);
+            padding: 80px 0;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
         }
-        .hero-content { max-width: 800px; }
-        .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 20px; }
-        .hero p { font-size: 1.15rem; color: var(--text-muted); margin-bottom: 30px; }
-        
-        .standards-note {
-            background: #fff;
-            border-left: 4px solid var(--accent);
-            padding: 20px;
-            border-radius: 0 var(--radius) var(--radius) 0;
-            box-shadow: var(--shadow);
-            margin-bottom: 32px;
-            font-size: 0.95rem;
-        }
-        .standards-note strong { color: var(--primary); }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .hero p { font-size: 1.25rem; max-width: 700px; margin: 0 auto 2rem; }
 
-        /* --- Grid & Cards --- */
-        .grid-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            margin-top: 40px;
-        }
+        /* --- Content Blocks --- */
+        section { padding: 60px 0; }
+        .section-header { text-align: center; margin-bottom: 40px; }
+        .section-header h2 { font-size: 2rem; margin-bottom: 0.5rem; }
 
-        .card {
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            padding: 30px;
-            box-shadow: var(--shadow);
-            border: 1px solid #f1f5f9;
-            transition: transform 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-        .card:hover { transform: translateY(-5px); border-color: #e2e8f0; }
-        
-        .card-icon {
-            width: 40px;
-            height: 40px;
-            background: #eff6ff;
-            color: var(--accent);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        
-        .card h3 { margin-bottom: 12px; font-size: 1.25rem; }
-        .card p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 12px; }
-        
-        /* Specific borders for logic flow */
-        .border-left-accent { border-left: 4px solid var(--accent); }
-        .border-left-success { border-left: 4px solid var(--success); }
-        .border-left-warning { border-left: 4px solid var(--warning); }
-
-        /* --- Calculator --- */
-        .calc-section { background-color: var(--primary); color: white; }
-        .calc-section h2 { color: white; }
-        .calc-section p { color: #94a3b8; }
-
-        .calc-container {
+        .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 40px;
+            align-items: center;
+        }
+
+        /* --- Calculator Section (Main) --- */
+        .calc-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr; /* Inputs narrower, Viz wider */
+            gap: 30px;
             background: white;
-            padding: 40px;
+            padding: 30px;
             border-radius: var(--radius);
-            color: var(--text-main);
+            box-shadow: var(--shadow);
         }
 
-        .input-group { margin-bottom: 16px; }
-        .input-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 6px; color: var(--primary-light); }
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border 0.2s;
+        /* Left: Inputs */
+        .calc-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        .input-group input:focus { outline: none; border-color: var(--accent); }
-
-        .results-panel {
-            background: #f8fafc;
-            padding: 24px;
-            border-radius: var(--radius);
-            border: 1px solid #e2e8f0;
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
         }
-
-        .result-row {
+        .input-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px dashed #cbd5e1;
         }
-        .result-row.total { border-bottom: none; border-top: 2px solid var(--text-main); margin-top: 10px; padding-top: 20px; }
-        .result-row .label { font-weight: 500; }
-        .result-row .value { font-weight: 700; font-size: 1.1rem; }
-        
-        .bar-chart { margin-top: 30px; }
-        .bar-group { margin-bottom: 15px; }
-        .bar-label { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px; font-weight: 600; }
-        .bar-track { width: 100%; height: 10px; background: #e2e8f0; border-radius: 5px; overflow: hidden; }
-        .bar-fill { height: 100%; background: var(--accent); width: 0; transition: width 0.5s ease-out; }
+        .input-group input {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: var(--font-main);
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .input-hint { font-size: 0.75rem; color: var(--secondary); margin-top: 2px; }
 
-        /* --- Accordion/FAQ --- */
-        .accordion-item { border-bottom: 1px solid #e2e8f0; }
-        .accordion-btn {
+        /* Right: Visualization */
+        .viz-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* 1. KPIs Cards */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        .kpi-card {
+            background: var(--bg-body);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .kpi-label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 5px; }
+        .kpi-value { font-size: 1.1rem; font-weight: 700; color: var(--text-main); display: block; }
+        .kpi-sub { font-size: 0.8rem; color: var(--primary); font-weight: 600; }
+
+        /* 2. Waterfall Chart */
+        .chart-box {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .chart-title { font-size: 1rem; font-weight: 700; margin-bottom: 15px; }
+        
+        .waterfall-chart {
+            display: flex;
+            height: 250px;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 10px;
+            padding-bottom: 30px; /* Space for labels */
+            position: relative;
+        }
+        .bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            height: 100%;
+        }
+        .bar-spacer { transition: height 0.4s ease; }
+        .bar-segment {
+            transition: height 0.4s ease, background 0.2s;
+            border-radius: 4px;
+            position: relative;
+            min-height: 2px; /* Visibility for near-zero */
+        }
+        
+        /* Bar Colors */
+        .bar-rev { background: var(--color-revenue); }
+        .bar-cost { background: var(--color-cost); opacity: 0.8; }
+        .bar-res { background: var(--color-profit); opacity: 0.3; } /* Intermediate result ghost */
+        .bar-net { background: var(--color-profit); }
+        
+        .bar-val-label {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .bar-name-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-align: center;
             width: 100%;
-            padding: 20px 0;
+            line-height: 1.1;
+        }
+
+        /* 3. Comparison (Managerial vs Standard) */
+        .comparison-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .comp-col {
+            flex: 1;
+            background: var(--bg-body);
+            border-radius: 8px;
+            padding: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        .comp-col h4 { font-size: 0.9rem; margin-bottom: 10px; }
+        .comp-bar-bg { background: #e2e8f0; height: 10px; border-radius: 5px; width: 100%; }
+        .comp-bar-fill { height: 100%; border-radius: 5px; width: 0%; transition: width 0.5s ease; }
+        .comp-val { font-size: 1.2rem; font-weight: 700; margin-top: 5px; display: block; }
+
+        /* --- FAQ Accordion --- */
+        .accordion { max-width: 800px; margin: 0 auto; }
+        .acc-item { border-bottom: 1px solid var(--border); }
+        .acc-btn {
+            width: 100%;
             text-align: left;
+            padding: 20px 0;
             background: none;
             border: none;
             font-size: 1.1rem;
             font-weight: 600;
-            color: var(--primary);
             cursor: pointer;
             display: flex;
             justify-content: space-between;
-            align-items: center;
         }
-        .accordion-content {
+        .acc-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease-out;
+            transition: max-height 0.3s ease;
             color: var(--text-muted);
         }
-        .accordion-content p { padding-bottom: 20px; }
+        .acc-content p { margin-bottom: 20px; }
 
         /* --- Footer --- */
-        footer { background: white; padding: 40px 0; border-top: 1px solid #e2e8f0; text-align: center; }
-        .footer-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
-        .disclaimer { font-size: 0.8rem; color: #94a3b8; max-width: 600px; margin: 0 auto; }
-
-        /* --- Back to Top --- */
-        #backToTop {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 45px;
-            height: 45px;
-            background: var(--primary);
+        footer {
+            background: var(--text-main);
             color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 99;
-            font-size: 1.2rem;
+            padding: 40px 0;
+            text-align: center;
+            font-size: 0.9rem;
         }
-        #backToTop.visible { opacity: 1; pointer-events: all; }
+        .disclaimer { opacity: 0.6; font-size: 0.8rem; margin-top: 20px; }
 
-        /* --- Mobile --- */
-        @media (max-width: 768px) {
-            .nav-links { display: none; } /* Simplified for demo */
+        /* --- Responsive --- */
+        @media (max-width: 900px) {
+            .calc-wrapper { grid-template-columns: 1fr; }
+            .grid-2 { grid-template-columns: 1fr; }
             .hero h1 { font-size: 2rem; }
-            .calc-container { grid-template-columns: 1fr; padding: 20px; }
+            .kpi-row { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="container">
-        <nav>
-            <a href="#" class="logo">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                FinMan Pro
-            </a>
-            <div class="nav-links">
-                <a href="#structure">Структура</a>
-                <a href="#calculator">Калькулятор</a>
-                <a href="#faq">Вопросы</a>
-            </div>
-        </nav>
-    </div>
-</header>
-
-<main>
-    <section class="hero">
+    <header class="hero">
         <div class="container">
-            <div class="hero-content">
-                <span class="tag">Для предпринимателей и производства</span>
-                <h1>P&L / ОПиУ: Управленческий подход</h1>
-                <p>Как считать реальную прибыль, а не «бухгалтерскую». Пошаговое руководство по структуре отчета о прибылях и убытках для производственной компании.</p>
-                
-                <div class="standards-note">
-                    <strong>⚠️ Важное отличие:</strong> Это пример <em>управленческого</em> отчета. 
-                    <ul style="margin-top: 10px; list-style: disc; padding-left: 20px; color: var(--text-muted);">
-                        <li>Он отличается от стандартов РСБУ (ФСБУ 4/2023, Приказ №157н) и МСФО (IAS 1, IFRS 18).</li>
-                        <li>Цель этого отчета — показать экономику бизнеса для принятия решений, а не сдать налоговую декларацию.</li>
-                        <li>Мы группируем расходы по их поведению (переменные/постоянные), а не только по функции.</li>
-                    </ul>
-                </div>
+            <h1>Управленческий P&L для производства</h1>
+            <p>Перестаньте путать остаток на счете с прибылью. Интерактивная модель расчета EBITDA и Чистой прибыли с учетом производственной специфики.</p>
+            <a href="#calculator" class="btn">Перейти к расчету</a>
+        </div>
+    </header>
 
-                <a href="#structure" class="btn">Перейти к структуре отчета</a>
+    <section>
+        <div class="container grid-2">
+            <div>
+                <h2>Проблема: "Где деньги?"</h2>
+                <p>Классическая ситуация производителя: работаем много, отгрузки идут, а денег на развитие нет. Бухгалтерский отчет показывает прибыль, но она "бумажная".</p>
+                <p>Это происходит из-за неправильного понимания структуры расходов (переменные vs постоянные) и влияния складских запасов на финансовый результат.</p>
+            </div>
+            <div style="text-align: center;">
+                <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="100" cy="100" r="90" fill="#F1F5F9"/>
+                    <path d="M60 140L80 80L110 110L140 50" stroke="#CBD5E1" stroke-width="4" stroke-linecap="round"/>
+                    <text x="100" y="180" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#64748B">Бухгалтерия vs Реальность</text>
+                </svg>
             </div>
         </div>
     </section>
 
-    <section id="structure">
+    <section id="calculator" style="background-color: #f1f5f9;">
         <div class="container">
-            <h2>Структура управленческого P&L</h2>
-            <p style="margin-bottom: 30px; color: var(--text-muted);">Следуйте по шагам сверху вниз, чтобы понять, как формируется Чистая прибыль.</p>
-            
-            <div class="grid-cards">
-                
-                <div class="card border-left-accent">
-                    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-                    <h3>1. Выручка (Revenue)</h3>
-                    <p>Начисленный доход от отгруженной продукции.</p>
-                    <div class="formula-box">Цена × Объем продаж</div>
-                    <p><small>❌ Ошибка: Считать деньги в кассе (авансы). Выручка признается в момент перехода прав на товар (отгрузка).</small></p>
-                </div>
-
-                <div class="card">
-                    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><line x1="16" y1="8" x2="2" y2="22"/><line x1="17.5" y1="15" x2="9" y2="15"/></svg></div>
-                    <h3>2. Переменные издержки (COGS/Variable)</h3>
-                    <p>Расходы, которые напрямую зависят от объема выпуска. Если завод стоит — эти расходы = 0.</p>
-                    <ul>
-                        <li>• Сырье и материалы</li>
-                        <li>• Сдельная зарплата рабочих</li>
-                        <li>• Упаковка, прямая логистика</li>
-                    </ul>
-                </div>
-
-                <div class="card border-left-success">
-                    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg></div>
-                    <h3>3. Маржинальный доход</h3>
-                    <p>Сколько денег приносит каждая проданная единица после вычета сырья.</p>
-                    <div class="formula-box">Выручка − Переменные издержки</div>
-                    <p><strong>Маржинальность:</strong> (МД / Выручка) × 100%.</p>
-                </div>
-
-                <div class="card">
-                    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V7l8-4 8 4v14M8 21v-2a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
-                    <h3>4. Постоянные производственные</h3>
-                    <p>Расходы <strong>цеха</strong>, которые не зависят от выпуска в моменте.</p>
-                    <ul>
-                        <li>• Аренда производственных площадей</li>
-                        <li>• Оклад начальника цеха, мастеров, технологов</li>
-                        <li>• Ремонт и обслуживание станков (фиксированное)</li>
-                    </ul>
-                </div>
-
-                <div class="card border-left-success">
-                    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8l-8 8"/><path d="M8 8l8 8"/></svg></div>
-                    <h3>5. Валовая прибыль (Gross Profit)</h3>
-                    <p>Эффективность именно <strong>производственной модели</strong> бизнеса.</p>
-                    <div class="formula-box">Марж. доход − Пост. производственные</div>
-                    <p>Показывает, окупает ли производство само себя без учета офиса.</p>
-                </div>
-
-                <div class="card">
-                    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-                    <h3>6. Операционные (OpEx)</h3>
-                    <p>Коммерческие, общие и административные расходы.</p>
-                    <ul>
-                        <li>• Офис, бухгалтерия, юристы</li>
-                        <li>• Маркетинг и продажи (отдел продаж)</li>
-                        <li>• IT, связь, представительские</li>
-                    </ul>
-                </div>
-
-                <div class="card border-left-warning">
-                    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-                    <h3>7. EBITDA</h3>
-                    <p>Операционная прибыль до вычета процентов, налогов и амортизации.</p>
-                    <div class="formula-box">Валовая − OpEx</div>
-                    <p>Главный индикатор "здоровья" основного бизнеса. <br>⚠️ Не равна деньгам на счете!</p>
-                </div>
-
-                <div class="card">
-                    <div class="card-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-                    <h3>8. Амортизация, % и Налоги</h3>
-                    <p><strong>Амортизация:</strong> "Виртуальный" расход, износ оборудования.<br>
-                    <strong>Проценты:</strong> Плата банку за кредиты.<br>
-                    <strong>Налог на прибыль:</strong> Платежи государству.</p>
-                </div>
-
-                <div class="card border-left-success" style="background: #f0fdf4; border-color: #bbf7d0;">
-                    <div class="card-icon" style="color: #15803d; background: #dcfce7;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
-                    <h3>9. Чистая прибыль (Net Income)</h3>
-                    <p>Итоговый результат собственника.</p>
-                    <div class="formula-box">EBITDA − Амортизация − % − Налоги</div>
-                    <p>Именно из этой суммы выплачиваются дивиденды.</p>
-                </div>
-
+            <div class="section-header">
+                <h2>Интерактивная модель P&L</h2>
+                <p>Изменяйте значения слева — графики обновятся мгновенно.</p>
             </div>
-        </div>
-    </section>
 
-    <section id="calculator" class="calc-section">
-        <div class="container">
-            <h2 style="margin-bottom: 40px; text-align: center;">P&L Калькулятор</h2>
-            <div class="calc-container">
-                
+            <div class="calc-wrapper">
                 <div class="calc-inputs">
-                    <h3 style="margin-bottom: 20px; color: var(--primary);">Ввод данных (за месяц)</h3>
+                    <h3>Ввод данных (за месяц)</h3>
                     
                     <div class="input-group">
-                        <label>1. Выручка</label>
-                        <input type="number" id="in-rev" value="5000000" min="0">
+                        <label>Выручка <span>₽</span></label>
+                        <input type="number" id="in-revenue" value="1000000" min="0">
                     </div>
 
                     <div class="input-group">
-                        <label>2. Переменные издержки (Сырье, сделка)</label>
-                        <input type="number" id="in-var" value="2500000" min="0">
+                        <label>Переменные издержки (Сырье, сделка)</label>
+                        <input type="number" id="in-cogs" value="400000" min="0">
+                        <div class="input-hint">Зависят от объема выпуска</div>
                     </div>
 
                     <div class="input-group">
-                        <label>4. Постоянные производственные (Цех)</label>
-                        <input type="number" id="in-fix-mfg" value="800000" min="0">
+                        <label>Пост. производственные (Аренда цеха, мастера)</label>
+                        <input type="number" id="in-fixed-prod" value="200000" min="0">
                     </div>
 
                     <div class="input-group">
-                        <label>6. Операционные расходы (Офис, Маркетинг)</label>
-                        <input type="number" id="in-opex" value="700000" min="0">
+                        <label>Операционные (OPEX: Офис, Маркетинг)</label>
+                        <input type="number" id="in-opex" value="150000" min="0">
                     </div>
 
                     <div class="input-group">
-                        <label>8. Амортизация + Проценты + Налоги</label>
-                        <input type="number" id="in-others" value="400000" min="0">
+                        <label>Амортизация (D&A)</label>
+                        <input type="number" id="in-da" value="50000" min="0">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Проценты по кредитам</label>
+                        <input type="number" id="in-interest" value="30000" min="0">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Налоги (Прибыль/УСН)</label>
+                        <input type="number" id="in-tax" value="40000" min="0">
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px dashed var(--border);">
+
+                    <div class="input-group">
+                        <label>Изменение запасов готовой продукции (+/-)</label>
+                        <input type="number" id="in-inventory" value="0">
+                        <div class="input-hint">Если произвели больше, чем продали — ставьте плюс.</div>
                     </div>
                 </div>
 
-                <div class="results-panel">
-                    <h3 style="margin-bottom: 20px;">Результат</h3>
+                <div class="viz-container">
                     
-                    <div class="result-row">
-                        <span class="label">Выручка</span>
-                        <span class="value" id="out-rev">0</span>
+                    <div class="kpi-row">
+                        <div class="kpi-card">
+                            <span class="kpi-label">Марж. доход</span>
+                            <span class="kpi-value" id="out-md">0</span>
+                            <span class="kpi-sub" id="out-md-p">0%</span>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-label">Валовая (Упр)</span>
+                            <span class="kpi-value" id="out-gp">0</span>
+                            <span class="kpi-sub" id="out-gp-p">0%</span>
+                        </div>
+                        <div class="kpi-card" style="background: #eff6ff;">
+                            <span class="kpi-label" style="color: var(--primary);">EBITDA</span>
+                            <span class="kpi-value" id="out-ebitda">0</span>
+                            <span class="kpi-sub" id="out-ebitda-p">0%</span>
+                        </div>
+                        <div class="kpi-card" style="background: #f0fdf4;">
+                            <span class="kpi-label" style="color: #15803d;">Чистая прибыль</span>
+                            <span class="kpi-value" id="out-net">0</span>
+                            <span class="kpi-sub" id="out-net-p">0%</span>
+                        </div>
                     </div>
 
-                    <div class="result-row">
-                        <span class="label" style="color: var(--accent);">3. Маржинальный доход</span>
-                        <span class="value" id="out-md">0</span>
-                    </div>
-                    
-                    <div class="result-row">
-                        <span class="label" style="color: var(--success);">5. Валовая прибыль</span>
-                        <span class="value" id="out-gp">0</span>
+                    <div class="chart-box">
+                        <div class="chart-title">Водопад расходов (Waterfall)</div>
+                        <div class="waterfall-chart" id="waterfall">
+                            <div class="bar-col">
+                                <span class="bar-val-label" id="wf-rev-val"></span>
+                                <div class="bar-segment bar-rev" id="wf-rev-bar" style="height: 100%;"></div>
+                                <span class="bar-name-label">Выручка</span>
+                            </div>
+
+                            <div class="bar-col">
+                                <div class="bar-spacer" id="wf-var-space"></div>
+                                <span class="bar-val-label" id="wf-var-val" style="color: var(--color-cost);"></span>
+                                <div class="bar-segment bar-cost" id="wf-var-bar"></div>
+                                <span class="bar-name-label">Перем.<br>расходы</span>
+                            </div>
+
+                            <div class="bar-col">
+                                <div class="bar-spacer" id="wf-fix-space"></div>
+                                <span class="bar-val-label" id="wf-fix-val" style="color: var(--color-cost);"></span>
+                                <div class="bar-segment bar-cost" id="wf-fix-bar"></div>
+                                <span class="bar-name-label">Пост.<br>произв.</span>
+                            </div>
+
+                            <div class="bar-col">
+                                <div class="bar-spacer" id="wf-opex-space"></div>
+                                <span class="bar-val-label" id="wf-opex-val" style="color: var(--color-cost);"></span>
+                                <div class="bar-segment bar-cost" id="wf-opex-bar"></div>
+                                <span class="bar-name-label">OPEX</span>
+                            </div>
+
+                            <div class="bar-col">
+                                <div class="bar-spacer" id="wf-other-space"></div>
+                                <span class="bar-val-label" id="wf-other-val" style="color: var(--color-cost);"></span>
+                                <div class="bar-segment bar-cost" id="wf-other-bar"></div>
+                                <span class="bar-name-label">Налоги<br>и %</span>
+                            </div>
+
+                            <div class="bar-col">
+                                <div class="bar-spacer" id="wf-net-space"></div>
+                                <span class="bar-val-label" id="wf-net-val"></span>
+                                <div class="bar-segment bar-net" id="wf-net-bar"></div>
+                                <span class="bar-name-label">Чистая<br>прибыль</span>
+                            </div>
+
+                        </div>
                     </div>
 
-                    <div class="result-row">
-                        <span class="label" style="color: var(--warning);">7. EBITDA</span>
-                        <span class="value" id="out-ebitda">0</span>
-                    </div>
-                    
-                    <div class="result-row total">
-                        <span class="label">9. Чистая прибыль</span>
-                        <span class="value" id="out-net" style="color: var(--success); font-size: 1.3rem;">0</span>
+                    <div class="chart-box">
+                        <div class="chart-title">Влияние запасов (Managerial vs Accounting)</div>
+                        <div class="comparison-wrapper">
+                            <div class="comp-col">
+                                <h4>Управленческая прибыль</h4>
+                                <div class="comp-bar-bg"><div class="comp-bar-fill" id="comp-mgmt-bar" style="background: var(--primary);"></div></div>
+                                <span class="comp-val" id="comp-mgmt-val">0</span>
+                                <p style="font-size: 0.8rem; margin: 5px 0 0;">Считаем по факту продаж. "Кэш-ориентированный" взгляд.</p>
+                            </div>
+                            <div style="font-size: 1.5rem; color: var(--text-muted);">vs</div>
+                            <div class="comp-col">
+                                <h4>Стандартизированная</h4>
+                                <div class="comp-bar-bg"><div class="comp-bar-fill" id="comp-std-bar" style="background: var(--text-main);"></div></div>
+                                <span class="comp-val" id="comp-std-val">0</span>
+                                <p style="font-size: 0.8rem; margin: 5px 0 0;">Учитывает изменение запасов (капитализация затрат).</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="bar-chart">
-                        <div class="bar-group">
-                            <div class="bar-label"><span>Маржинальная рент. (к Выручке)</span><span id="lbl-md-perc">0%</span></div>
-                            <div class="bar-track"><div class="bar-fill" id="bar-md" style="width: 0%; background: var(--accent);"></div></div>
-                        </div>
-                        <div class="bar-group">
-                            <div class="bar-label"><span>Валовая рент. (к Выручке)</span><span id="lbl-gp-perc">0%</span></div>
-                            <div class="bar-track"><div class="bar-fill" id="bar-gp" style="width: 0%; background: var(--success);"></div></div>
-                        </div>
-                        <div class="bar-group">
-                            <div class="bar-label"><span>EBITDA Margin</span><span id="lbl-ebitda-perc">0%</span></div>
-                            <div class="bar-track"><div class="bar-fill" id="bar-ebitda" style="width: 0%; background: var(--warning);"></div></div>
-                        </div>
-                        <div class="bar-group">
-                            <div class="bar-label"><span>Чистая рентабельность</span><span id="lbl-net-perc">0%</span></div>
-                            <div class="bar-track"><div class="bar-fill" id="bar-net" style="width: 0%; background: #10b981;"></div></div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="faq">
+    <section>
         <div class="container">
-            <h2 style="margin-bottom: 30px;">Частые вопросы</h2>
+            <h2>В чем разница подходов?</h2>
+            <div class="grid-2" style="align-items: start;">
+                <div>
+                    <h3>Управленческий P&L</h3>
+                    <p>Фокусируется на <strong>Маржинальном доходе</strong> и <strong>EBITDA</strong>. Мы списываем постоянные расходы "периодом", чтобы понимать, покрывает ли текущая выручка жизнь завода.</p>
+                    <ul style="padding-left: 20px; color: var(--text-muted);">
+                        <li>Помогает в ценообразовании</li>
+                        <li>Показывает точку безубыточности</li>
+                        <li>Честнее при резких скачках продаж</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Стандарт (МСФО / РСБУ)</h3>
+                    <p>Если вы произвели 1000 станков, а продали 1, ваши расходы на 999 станков "уйдут на склад" (в актив баланса), а не в убыток. Прибыль будет выглядеть больше.</p>
+                    <p><strong>Риск:</strong> Можно показать огромную "бумажную" прибыль, забив склад неликвидом, но не иметь денег на счете.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" style="background-color: white;">
+        <div class="container">
+            <div class="section-header">
+                <h2>Частые вопросы (FAQ)</h2>
+            </div>
+            <div class="accordion">
+                <div class="acc-item">
+                    <button class="acc-btn">Почему EBITDA важнее Чистой прибыли для оценки бизнеса? <span>+</span></button>
+                    <div class="acc-content">
+                        <p>EBITDA показывает способность бизнеса генерировать деньги от основной деятельности, не учитывая долговую нагрузку (проценты) и способ обновления оборудования (амортизация). Это позволяет сравнивать эффективность разных заводов.</p>
+                    </div>
+                </div>
+                <div class="acc-item">
+                    <button class="acc-btn">Куда относить зарплату Начальника цеха? <span>+</span></button>
+                    <div class="acc-content">
+                        <p>В Постоянные производственные расходы. Это не переменные (не зависят от штучного выпуска), но и не офисные расходы. Если цех есть, зарплату платить нужно.</p>
+                    </div>
+                </div>
+                <div class="acc-item">
+                    <button class="acc-btn">Что такое Маржинальный доход? <span>+</span></button>
+                    <div class="acc-content">
+                        <p>Это Выручка минус Переменные расходы (сырье, сдельная ЗП). Это та сумма, которая остается на покрытие постоянных расходов (аренды, офиса) и формирование прибыли.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="background: var(--text-main); color: white; text-align: center;">
+        <div class="container">
+            <h2>Наведите порядок в финансах</h2>
+            <p style="color: #94a3b8; margin-bottom: 2rem;">Начните с правильного управленческого учета уже сегодня.</p>
+            <button class="btn" style="background: white; color: var(--text-main);" onclick="document.getElementById('calculator').scrollIntoView()">Вернуться к калькулятору</button>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>© 2024 P&L Expert. Материал носит образовательный характер.</p>
+            <div class="disclaimer">
+                Данный калькулятор является упрощенной моделью. Для принятия инвестиционных решений консультируйтесь с профессиональным аудитором.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
             
-            <div class="accordion-item">
-                <button class="accordion-btn">Чем валовая прибыль отличается от маржинальной? <span>+</span></button>
-                <div class="accordion-content">
-                    <p>В нашем управленческом формате: Маржинальная = Выручка − Переменные (сырье). Валовая = Маржинальная − Постоянные производственные (цех). Валовая показывает результат работы завода в целом, а маржинальная — эффективность продаж и материалоемкость.</p>
-                </div>
-            </div>
+            // 1. Get Elements
+            const inputs = {
+                rev: document.getElementById('in-revenue'),
+                cogs: document.getElementById('in-cogs'),
+                fix: document.getElementById('in-fixed-prod'),
+                opex: document.getElementById('in-opex'),
+                da: document.getElementById('in-da'),
+                int: document.getElementById('in-interest'),
+                tax: document.getElementById('in-tax'),
+                inv: document.getElementById('in-inventory')
+            };
 
-            <div class="accordion-item">
-                <button class="accordion-btn">Почему EBITDA не равна деньгам? <span>+</span></button>
-                <div class="accordion-content">
-                    <p>EBITDA — это "бумажная" операционная прибыль. Деньги могут быть заморожены в запасах на складе или в дебиторской задолженности (клиент не заплатил). Также из EBITDA еще нужно отдать кредиты и налоги.</p>
-                </div>
-            </div>
+            const outputs = {
+                md: document.getElementById('out-md'),
+                mdP: document.getElementById('out-md-p'),
+                gp: document.getElementById('out-gp'),
+                gpP: document.getElementById('out-gp-p'),
+                ebitda: document.getElementById('out-ebitda'),
+                ebitdaP: document.getElementById('out-ebitda-p'),
+                net: document.getElementById('out-net'),
+                netP: document.getElementById('out-net-p'),
+                // Comparison
+                compMgmtVal: document.getElementById('comp-mgmt-val'),
+                compMgmtBar: document.getElementById('comp-mgmt-bar'),
+                compStdVal: document.getElementById('comp-std-val'),
+                compStdBar: document.getElementById('comp-std-bar'),
+            };
 
-            <div class="accordion-item">
-                <button class="accordion-btn">Куда относить зарплату директора завода? <span>+</span></button>
-                <div class="accordion-content">
-                    <p>Если директор управляет именно производством — в Постоянные производственные расходы. Если генеральный директор всей компании — в Операционные расходы (OPEX/Офис).</p>
-                </div>
-            </div>
-        </div>
-    </section>
+            // Waterfall Elements
+            const wf = {
+                revVal: document.getElementById('wf-rev-val'),
+                
+                varSpace: document.getElementById('wf-var-space'),
+                varBar: document.getElementById('wf-var-bar'),
+                varVal: document.getElementById('wf-var-val'),
+                
+                fixSpace: document.getElementById('wf-fix-space'),
+                fixBar: document.getElementById('wf-fix-bar'),
+                fixVal: document.getElementById('wf-fix-val'),
 
-    <section id="summary" style="background: var(--bg-section);">
-        <div class="container" style="text-align: center;">
-            <h2>Главный вывод</h2>
-            <p style="max-width: 700px; margin: 20px auto 0;">
-                Не смешивайте личные деньги и деньги бизнеса. Не путайте остаток на счете с прибылью. 
-                Составляйте P&L ежемесячно по методу начисления, чтобы видеть реальную эффективность вашей бизнес-модели.
-            </p>
-        </div>
-    </section>
+                opexSpace: document.getElementById('wf-opex-space'),
+                opexBar: document.getElementById('wf-opex-bar'),
+                opexVal: document.getElementById('wf-opex-val'),
 
-</main>
+                otherSpace: document.getElementById('wf-other-space'),
+                otherBar: document.getElementById('wf-other-bar'),
+                otherVal: document.getElementById('wf-other-val'),
 
-<footer>
-    <div class="container">
-        <div class="footer-links">
-            <a href="#">Политика конфиденциальности</a>
-            <a href="#">О проекте</a>
-        </div>
-        <p class="disclaimer">
-            Материал носит ознакомительный характер. Терминология упрощена для управленческих целей.<br>
-            Для официальной отчетности руководствуйтесь ФСБУ 4/2023 (РФ) или IFRS / IAS 1 (Международные стандарты).
-        </p>
-        <p style="margin-top: 20px; font-size: 0.9rem;">&copy; 2024 FinMan Pro. Все права защищены.</p>
-    </div>
-</footer>
+                netSpace: document.getElementById('wf-net-space'),
+                netBar: document.getElementById('wf-net-bar'),
+                netVal: document.getElementById('wf-net-val'),
+            };
 
-<button id="backToTop" aria-label="Наверх">↑</button>
+            // 2. Formatters
+            const formatCur = (num) => new Intl.NumberFormat('ru-RU').format(Math.round(num));
+            const formatPct = (num) => Math.round(num) + '%';
 
-<script>
-    // --- Calculator Logic ---
-    function calculatePnL() {
-        // Get Inputs
-        const rev = parseFloat(document.getElementById('in-rev').value) || 0;
-        const variable = parseFloat(document.getElementById('in-var').value) || 0;
-        const fixMfg = parseFloat(document.getElementById('in-fix-mfg').value) || 0;
-        const opex = parseFloat(document.getElementById('in-opex').value) || 0;
-        const others = parseFloat(document.getElementById('in-others').value) || 0;
+            // 3. Calculation Function
+            function calculate() {
+                // Get values
+                const v = {
+                    rev: parseFloat(inputs.rev.value) || 0,
+                    cogs: parseFloat(inputs.cogs.value) || 0,
+                    fix: parseFloat(inputs.fix.value) || 0,
+                    opex: parseFloat(inputs.opex.value) || 0,
+                    da: parseFloat(inputs.da.value) || 0,
+                    int: parseFloat(inputs.int.value) || 0,
+                    tax: parseFloat(inputs.tax.value) || 0,
+                    inv: parseFloat(inputs.inv.value) || 0,
+                };
 
-        // Calculations Logic
-        const md = rev - variable;
-        const gp = md - fixMfg; // Managerial Gross Profit
-        const ebitda = gp - opex;
-        const net = ebitda - others;
+                // Managerial Logic
+                const md = v.rev - v.cogs;
+                const gpMgmt = md - v.fix;
+                const ebitda = gpMgmt - v.opex;
+                const others = v.da + v.int + v.tax;
+                const net = ebitda - others;
 
-        // Helper to format numbers
-        const fmt = (num) => new Intl.NumberFormat('ru-RU').format(Math.round(num));
+                // Percentages
+                const safeDiv = (n, d) => d === 0 ? 0 : (n / d) * 100;
+                
+                // Update Text Outputs
+                outputs.md.textContent = formatCur(md);
+                outputs.mdP.textContent = formatPct(safeDiv(md, v.rev));
+                
+                outputs.gp.textContent = formatCur(gpMgmt);
+                outputs.gpP.textContent = formatPct(safeDiv(gpMgmt, v.rev));
+                
+                outputs.ebitda.textContent = formatCur(ebitda);
+                outputs.ebitdaP.textContent = formatPct(safeDiv(ebitda, v.rev));
+                
+                outputs.net.textContent = formatCur(net);
+                outputs.netP.textContent = formatPct(safeDiv(net, v.rev));
+                outputs.net.style.color = net >= 0 ? 'var(--color-profit)' : 'var(--color-cost)';
 
-        // Update Text Outputs
-        document.getElementById('out-rev').innerText = fmt(rev);
-        document.getElementById('out-md').innerText = fmt(md);
-        document.getElementById('out-gp').innerText = fmt(gp);
-        document.getElementById('out-ebitda').innerText = fmt(ebitda);
-        document.getElementById('out-net').innerText = fmt(net);
+                // --- Visualization Logic ---
 
-        // Calculate Percentages for Bars
-        const getPerc = (val) => {
-            if (rev === 0) return 0;
-            return Math.max(0, Math.min(100, (val / rev) * 100));
-        };
+                // 1. Waterfall Logic (Percentages relative to Revenue for height)
+                // If Net is negative, we need to handle "waterfall going underground" visually, 
+                // but for simplicity in this demo, we clamp bars or show standard drop.
+                // We will use "Spacer" + "Bar Height" approach.
+                
+                const totalH = 100; // 100% height of container
+                const scale = v.rev > 0 ? (100 / v.rev) : 0;
 
-        const mdPerc = getPerc(md);
-        const gpPerc = getPerc(gp);
-        const ebitdaPerc = getPerc(ebitda);
-        const netPerc = getPerc(net);
+                // Revenue Bar
+                wf.revVal.textContent = formatCur(v.rev);
+                
+                // Var Costs (Start from top)
+                const hVar = v.cogs * scale;
+                wf.varBar.style.height = hVar + '%';
+                wf.varSpace.style.height = '0%'; // Starts at top (relative to prev top? No, visual waterfall usually steps down)
+                // Correct Flex Waterfall: Space = (Rev - Previous Drops), Bar = Current Cost
+                
+                // Let's calculate accumulated drops from Top (100%)
+                let currentLevel = v.rev;
 
-        // Update Bars
-        document.getElementById('bar-md').style.width = mdPerc + '%';
-        document.getElementById('bar-gp').style.width = gpPerc + '%';
-        document.getElementById('bar-ebitda').style.width = ebitdaPerc + '%';
-        document.getElementById('bar-net').style.width = netPerc + '%';
+                // Step 2: Variable
+                wf.varSpace.style.height = ((v.rev - currentLevel) * scale) + '%'; // 0
+                wf.varBar.style.height = (v.cogs * scale) + '%';
+                wf.varVal.textContent = '-' + formatCur(v.cogs);
+                currentLevel -= v.cogs; // = MD
 
-        // Update Labels
-        document.getElementById('lbl-md-perc').innerText = Math.round((md/rev)*100 || 0) + '%';
-        document.getElementById('lbl-gp-perc').innerText = Math.round((gp/rev)*100 || 0) + '%';
-        document.getElementById('lbl-ebitda-perc').innerText = Math.round((ebitda/rev)*100 || 0) + '%';
-        document.getElementById('lbl-net-perc').innerText = Math.round((net/rev)*100 || 0) + '%';
-    }
+                // Step 3: Fixed
+                wf.fixSpace.style.height = ((v.rev - currentLevel - v.fix) * scale) + '%'; // Wait, standard CSS flex alignment is tricky for spacers.
+                // Better Logic: The Spacer pushes the bar DOWN.
+                // Distance from Top = (Total Rev - Current Level before drop)
+                
+                const getTopSpace = (levelBeforeDrop) => (v.rev - levelBeforeDrop) * scale;
+                
+                // Fix Bar
+                wf.fixSpace.style.height = getTopSpace(currentLevel) + '%';
+                wf.fixBar.style.height = (v.fix * scale) + '%';
+                wf.fixVal.textContent = '-' + formatCur(v.fix);
+                currentLevel -= v.fix; // = GP
 
-    // Attach Listeners
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(input => {
-        input.addEventListener('input', calculatePnL);
-    });
+                // Opex Bar
+                wf.opexSpace.style.height = getTopSpace(currentLevel) + '%';
+                wf.opexBar.style.height = (v.opex * scale) + '%';
+                wf.opexVal.textContent = '-' + formatCur(v.opex);
+                currentLevel -= v.opex; // = EBITDA
 
-    // Initial calculation
-    calculatePnL();
+                // Others Bar
+                wf.otherSpace.style.height = getTopSpace(currentLevel) + '%';
+                wf.otherBar.style.height = (others * scale) + '%';
+                wf.otherVal.textContent = '-' + formatCur(others);
+                currentLevel -= others; // = Net
 
-    // --- Accordion Logic ---
-    const accBtns = document.querySelectorAll('.accordion-btn');
-    accBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            this.classList.toggle('active');
-            const content = this.nextElementSibling;
-            if (content.style.maxHeight) {
-                content.style.maxHeight = null;
-                this.querySelector('span').innerText = '+';
-            } else {
-                content.style.maxHeight = content.scrollHeight + "px";
-                this.querySelector('span').innerText = '−';
+                // Net Bar (Starts from bottom? No, floats at level)
+                // If Net > 0
+                if (currentLevel >= 0) {
+                    wf.netSpace.style.height = getTopSpace(currentLevel) + '%';
+                    wf.netBar.style.height = (currentLevel * scale) + '%';
+                    wf.netBar.style.background = 'var(--color-profit)';
+                } else {
+                    // Negative profit visualization is tricky with simple flex spacers
+                    // We stick it to bottom and make red for simplicity or 0 height
+                    wf.netSpace.style.height = getTopSpace(0) + '%'; // Push to bottom
+                    wf.netBar.style.height = Math.abs(currentLevel * scale) + '%';
+                    wf.netBar.style.background = 'var(--color-cost)';
+                    // In a flex-col justify-end, spacers push down.
+                    // For negative, we technically went below 0. 
+                    // Simplified: Show 2px min height if negative or 0.
+                }
+                wf.netVal.textContent = formatCur(net);
+
+
+                // 2. Comparison Logic (Managerial vs Standard)
+                // Standard Profit approx = Managerial Net + Inventory Change (capitalized costs)
+                // (Simplified model: assuming all mfg costs are capitalized)
+                const stdNet = net + v.inv;
+
+                outputs.compMgmtVal.textContent = formatCur(net);
+                outputs.compStdVal.textContent = formatCur(stdNet);
+
+                // Bar widths (find max to normalize)
+                const maxComp = Math.max(Math.abs(net), Math.abs(stdNet), 100); // 100 to prevent div by zero
+                const wMgmt = (Math.abs(net) / maxComp) * 100;
+                const wStd = (Math.abs(stdNet) / maxComp) * 100;
+
+                outputs.compMgmtBar.style.width = wMgmt + '%';
+                outputs.compStdBar.style.width = wStd + '%';
+                
+                // Color coding for negative results
+                outputs.compMgmtBar.style.background = net >= 0 ? 'var(--primary)' : 'var(--color-cost)';
+                outputs.compStdBar.style.background = stdNet >= 0 ? 'var(--text-main)' : 'var(--color-cost)';
             }
+
+            // 4. Events
+            Object.values(inputs).forEach(inp => {
+                inp.addEventListener('input', calculate);
+            });
+
+            // Accordion Logic
+            const accBtns = document.querySelectorAll('.acc-btn');
+            accBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const content = this.nextElementSibling;
+                    const isOpen = content.style.maxHeight;
+                    
+                    // Close all others (optional)
+                    document.querySelectorAll('.acc-content').forEach(c => c.style.maxHeight = null);
+                    document.querySelectorAll('.acc-btn span').forEach(s => s.innerText = '+');
+
+                    if (!isOpen) {
+                        content.style.maxHeight = content.scrollHeight + "px";
+                        this.querySelector('span').innerText = '-';
+                    }
+                });
+            });
+
+            // Init
+            calculate();
         });
-    });
-
-    // --- Back to Top ---
-    const backToTopBtn = document.getElementById('backToTop');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
-            backToTopBtn.classList.add('visible');
-        } else {
-            backToTopBtn.classList.remove('visible');
-        }
-    });
-    backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-</script>
-
+    </script>
 </body>
 </html>
